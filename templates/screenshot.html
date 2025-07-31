@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %}Screenshot Tool - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-4">
+                <i class="fas fa-camera me-3"></i>
+                {% if current_language == 'zh' %}
+                截图工具演示
+                {% elif current_language == 'en' %}
+                Screenshot Tool Demo
+                {% else %}
+                スクリーンショットツール
+                {% endif %}
+            </h1>
+            <p class="lead mb-4">
+                {% if current_language == 'zh' %}
+                演示 UI 变化的截图功能，用于文档和展示
+                {% elif current_language == 'en' %}
+                Demonstrate screenshot functionality for UI changes, documentation and presentation
+                {% else %}
+                UI変更のスクリーンショット機能のデモ。ドキュメントとプレゼンテーション用
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Screenshot Tool -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-camera me-2"></i>
+                        {% if current_language == 'zh' %}
+                        页面截图
+                        {% elif current_language == 'en' %}
+                        Page Screenshot
+                        {% else %}
+                        ページスクリーンショット
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="screenshotForm">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                {% if current_language == 'zh' %}
+                                页面 URL
+                                {% elif current_language == 'en' %}
+                                Page URL
+                                {% else %}
+                                ページ URL
+                                {% endif %}
+                            </label>
+                            <select class="form-select" id="pageUrl">
+                                <option value="/">
+                                    {% if current_language == 'zh' %}
+                                    首页
+                                    {% elif current_language == 'en' %}
+                                    Home Page
+                                    {% else %}
+                                    ホームページ
+                                    {% endif %}
+                                </option>
+                                <option value="/browse">
+                                    {% if current_language == 'zh' %}
+                                    浏览页面
+                                    {% elif current_language == 'en' %}
+                                    Browse Page
+                                    {% else %}
+                                    閲覧ページ
+                                    {% endif %}
+                                </option>
+                                <option value="/search">
+                                    {% if current_language == 'zh' %}
+                                    搜索页面
+                                    {% elif current_language == 'en' %}
+                                    Search Page
+                                    {% else %}
+                                    検索ページ
+                                    {% endif %}
+                                </option>
+                                <option value="/statistics">
+                                    {% if current_language == 'zh' %}
+                                    统计页面
+                                    {% elif current_language == 'en' %}
+                                    Statistics Page
+                                    {% else %}
+                                    統計ページ
+                                    {% endif %}
+                                </option>
+                                <option value="/github_bot">
+                                    {% if current_language == 'zh' %}
+                                    GitHub 机器人
+                                    {% elif current_language == 'en' %}
+                                    GitHub Bot
+                                    {% else %}
+                                    GitHub ボット
+                                    {% endif %}
+                                </option>
+                                <option value="/content_generator">
+                                    {% if current_language == 'zh' %}
+                                    内容生成器
+                                    {% elif current_language == 'en' %}
+                                    Content Generator
+                                    {% else %}
+                                    コンテンツジェネレーター
+                                    {% endif %}
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                {% if current_language == 'zh' %}
+                                元素选择器 (可选)
+                                {% elif current_language == 'en' %}
+                                Element Selector (Optional)
+                                {% else %}
+                                要素セレクター (オプション)
+                                {% endif %}
+                            </label>
+                            <input type="text" class="form-control" id="elementSelector" 
+                                   placeholder=".navbar, #main-content, .card">
+                            <small class="form-text text-muted">
+                                {% if current_language == 'zh' %}
+                                CSS 选择器，留空截图整个页面
+                                {% elif current_language == 'en' %}
+                                CSS selector, leave empty to capture full page
+                                {% else %}
+                                CSSセレクター、空白の場合はページ全体をキャプチャ
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="screenshotBtn">
+                            <i class="fas fa-camera me-2"></i>
+                            {% if current_language == 'zh' %}
+                            拍摄截图
+                            {% elif current_language == 'en' %}
+                            Take Screenshot
+                            {% else %}
+                            スクリーンショット撮影
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Screenshot Info -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% if current_language == 'zh' %}
+                        截图信息
+                        {% elif current_language == 'en' %}
+                        Screenshot Info
+                        {% else %}
+                        スクリーンショット情報
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <h6>
+                        {% if current_language == 'zh' %}
+                        支持的功能:
+                        {% elif current_language == 'en' %}
+                        Supported Features:
+                        {% else %}
+                        サポートされる機能:
+                        {% endif %}
+                    </h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            全页面截图
+                            {% elif current_language == 'en' %}
+                            Full page screenshot
+                            {% else %}
+                            フルページスクリーンショット
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            元素截图
+                            {% elif current_language == 'en' %}
+                            Element screenshot
+                            {% else %}
+                            要素スクリーンショット
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            多种格式
+                            {% elif current_language == 'en' %}
+                            Multiple formats
+                            {% else %}
+                            複数フォーマット
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            自动命名
+                            {% elif current_language == 'en' %}
+                            Auto naming
+                            {% else %}
+                            自動命名
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screenshot Result -->
+    <div class="row" id="screenshotResult" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        {% if current_language == 'zh' %}
+                        截图结果
+                        {% elif current_language == 'en' %}
+                        Screenshot Result
+                        {% else %}
+                        スクリーンショット結果
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body" id="screenshotContent">
+                    <!-- Result will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Screenshots Gallery -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-images me-2"></i>
+                        {% if current_language == 'zh' %}
+                        演示截图画廊
+                        {% elif current_language == 'en' %}
+                        Demo Screenshots Gallery
+                        {% else %}
+                        デモスクリーンショットギャラリー
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-home fa-3x text-primary mb-3"></i>
+                                    <h6>
+                                        {% if current_language == 'zh' %}
+                                        首页界面
+                                        {% elif current_language == 'en' %}
+                                        Home Interface
+                                        {% else %}
+                                        ホーム画面
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">1200x800px</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-search fa-3x text-success mb-3"></i>
+                                    <h6>
+                                        {% if current_language == 'zh' %}
+                                        搜索功能
+                                        {% elif current_language == 'en' %}
+                                        Search Feature
+                                        {% else %}
+                                        検索機能
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">1200x600px</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                                    <h6>
+                                        {% if current_language == 'zh' %}
+                                        统计图表
+                                        {% elif current_language == 'en' %}
+                                        Statistics Charts
+                                        {% else %}
+                                        統計チャート
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">1200x900px</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('screenshotForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const screenshotBtn = document.getElementById('screenshotBtn');
+    const originalText = screenshotBtn.innerHTML;
+    
+    // Show loading state
+    screenshotBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{% if current_language == "zh" %}正在截图...{% elif current_language == "en" %}Taking Screenshot...{% else %}スクリーンショット撮影中...{% endif %}';
+    screenshotBtn.disabled = true;
+    
+    // Gather form data
+    const formData = new FormData();
+    formData.append('page_url', document.getElementById('pageUrl').value);
+    formData.append('element_selector', document.getElementById('elementSelector').value);
+    
+    // Simulate screenshot process
+    fetch('/take_screenshot', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show result
+        document.getElementById('screenshotResult').style.display = 'block';
+        document.getElementById('screenshotContent').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>{% if current_language == "zh" %}截图信息{% elif current_language == "en" %}Screenshot Info{% else %}スクリーンショット情報{% endif %}</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>{% if current_language == "zh" %}URL{% elif current_language == "en" %}URL{% else %}URL{% endif %}:</strong> ${data.url}</li>
+                        <li><strong>{% if current_language == "zh" %}文件名{% elif current_language == "en" %}Filename{% else %}ファイル名{% endif %}:</strong> ${data.filename}</li>
+                        <li><strong>{% if current_language == "zh" %}时间{% elif current_language == "en" %}Timestamp{% else %}時刻{% endif %}:</strong> ${data.timestamp}</li>
+                        <li><strong>{% if current_language == "zh" %}状态{% elif current_language == "en" %}Status{% else %}ステータス{% endif %}:</strong> <span class="badge bg-success">${data.status}</span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>{% if current_language == "zh" %}图片详情{% elif current_language == "en" %}Image Details{% else %}画像詳細{% endif %}</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>{% if current_language == "zh" %}宽度{% elif current_language == "en" %}Width{% else %}幅{% endif %}:</strong> ${data.size.width}px</li>
+                        <li><strong>{% if current_language == "zh" %}高度{% elif current_language == "en" %}Height{% else %}高さ{% endif %}:</strong> ${data.size.height}px</li>
+                        <li><strong>{% if current_language == "zh" %}格式{% elif current_language == "en" %}Format{% else %}フォーマット{% endif %}:</strong> PNG</li>
+                        ${data.selector ? `<li><strong>{% if current_language == "zh" %}选择器{% elif current_language == "en" %}Selector{% else %}セレクター{% endif %}:</strong> ${data.selector}</li>` : ''}
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                {% if current_language == "zh" %}
+                这是一个演示功能。在实际应用中，这里会显示生成的截图图片。
+                {% elif current_language == "en" %}
+                This is a demonstration feature. In a real application, the generated screenshot would be displayed here.
+                {% else %}
+                これはデモ機能です。実際のアプリケーションでは、生成されたスクリーンショットがここに表示されます。
+                {% endif %}
+            </div>
+        `;
+        
+        // Scroll to result
+        document.getElementById('screenshotResult').scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('{% if current_language == "zh" %}截图失败，请重试{% elif current_language == "en" %}Screenshot failed, please try again{% else %}スクリーンショットに失敗しました。再試行してください{% endif %}');
+    })
+    .finally(() => {
+        // Reset button
+        screenshotBtn.innerHTML = originalText;
+        screenshotBtn.disabled = false;
+    });
+});
+</script>
+{% endblock %}

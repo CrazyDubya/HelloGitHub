@@ -176,6 +176,104 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Screenshot Tool -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="tool-icon bg-secondary text-white rounded-circle me-3">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">{{ get_translation('screenshot_tool') if get_translation('screenshot_tool') != 'screenshot_tool' else '截图工具' }}</h5>
+                                <small class="text-muted">
+                                    {% if current_language == 'zh' %}
+                                    UI 变化截图和文档生成
+                                    {% elif current_language == 'en' %}
+                                    UI screenshot and documentation generation
+                                    {% else %}
+                                    UI スクリーンショットとドキュメント生成
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            {% if current_language == 'zh' %}
+                            自动截取应用程序界面，用于文档编写和演示展示，支持全页面和元素级别截图。
+                            {% elif current_language == 'en' %}
+                            Automatically capture application interfaces for documentation and presentation, supporting full page and element-level screenshots.
+                            {% else %}
+                            ドキュメントとプレゼンテーション用にアプリケーションインターフェースを自動キャプチャ。フルページと要素レベルのスクリーンショットをサポート。
+                            {% endif %}
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>
+                                {% if current_language == 'zh' %}
+                                支持功能:
+                                {% elif current_language == 'en' %}
+                                Features:
+                                {% else %}
+                                機能:
+                                {% endif %}
+                            </h6>
+                            <ul class="small">
+                                <li>
+                                    {% if current_language == 'zh' %}
+                                    全页面截图
+                                    {% elif current_language == 'en' %}
+                                    Full page screenshots
+                                    {% else %}
+                                    フルページスクリーンショット
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    {% if current_language == 'zh' %}
+                                    元素选择截图
+                                    {% elif current_language == 'en' %}
+                                    Element selection screenshots
+                                    {% else %}
+                                    要素選択スクリーンショット
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    {% if current_language == 'zh' %}
+                                    自动文件命名
+                                    {% elif current_language == 'en' %}
+                                    Automatic file naming
+                                    {% else %}
+                                    自動ファイル命名
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    {% if current_language == 'zh' %}
+                                    多种输出格式
+                                    {% elif current_language == 'en' %}
+                                    Multiple output formats
+                                    {% else %}
+                                    複数の出力フォーマット
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="{{ url_for('screenshot_demo') }}" class="btn btn-secondary">
+                                <i class="fas fa-camera me-2"></i>
+                                {% if current_language == 'zh' %}
+                                使用截图工具
+                                {% elif current_language == 'en' %}
+                                Use Screenshot Tool
+                                {% else %}
+                                スクリーンショットツールを使用
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

@@ -19,8 +19,10 @@ import os
 import re
 import json
 import glob
+import subprocess
+import tempfile
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import markdown
 from bs4 import BeautifulSoup
 
@@ -32,6 +34,76 @@ issues_cache = {}
 projects_cache = []
 stats_cache = {}
 
+# Language configuration
+LANGUAGES = {
+    'zh': {'name': '中文', 'flag': '🇨🇳'},
+    'en': {'name': 'English', 'flag': '🇺🇸'},
+    'ja': {'name': '日本語', 'flag': '🇯🇵'}
+}
+
+TRANSLATIONS = {
+    'zh': {
+        'title': 'HelloGitHub 演示',
+        'subtitle': '探索 GitHub 上有趣、入门级的开源项目。每月 28 号更新，帮你发现开源的乐趣！',
+        'browse_issues': '浏览期刊',
+        'search_projects': '搜索项目',
+        'statistics': '统计分析',
+        'tools': '开发工具',
+        'github_bot': 'GitHub 机器人',
+        'content_generator': '内容生成器',
+        'language': '语言',
+        'issue': '期刊',
+        'projects': '项目',
+        'search': '搜索',
+        'category': '分类',
+        'all_categories': '所有分类',
+        'no_results': '没有找到结果'
+    },
+    'en': {
+        'title': 'HelloGitHub Demo',
+        'subtitle': 'Explore interesting and beginner-friendly open source projects on GitHub. Updated on the 28th of every month to help you discover the joy of open source!',
+        'browse_issues': 'Browse Issues',
+        'search_projects': 'Search Projects',
+        'statistics': 'Statistics',
+        'tools': 'Development Tools',
+        'github_bot': 'GitHub Bot',
+        'content_generator': 'Content Generator',
+        'language': 'Language',
+        'issue': 'Issue',
+        'projects': 'Projects',
+        'search': 'Search',
+        'category': 'Category',
+        'all_categories': 'All Categories',
+        'no_results': 'No results found'
+    },
+    'ja': {
+        'title': 'HelloGitHub デモ',
+        'subtitle': 'GitHub上の面白くて初心者向けのオープンソースプロジェクトを探索します。毎月28日に更新され、オープンソースの楽しさを発見するのに役立ちます！',
+        'browse_issues': '号を閲覧',
+        'search_projects': 'プロジェクト検索',
+        'statistics': '統計',
+        'tools': '開発ツール',
+        'github_bot': 'GitHub ボット',
+        'content_generator': 'コンテンツジェネレーター',
+        'language': '言語',
+        'issue': '号',
+        'projects': 'プロジェクト',
+        'search': '検索',
+        'category': 'カテゴリ',
+        'all_categories': 'すべてのカテゴリ',
+        'no_results': '結果が見つかりません'
+    }
+}
+
+def get_language():
+    """Get current language from session or default to Chinese"""
+    return session.get('language', 'zh')
+
+def get_translation(key):
+    """Get translation for current language"""
+    lang = get_language()
+    return TRANSLATIONS.get(lang, TRANSLATIONS['zh']).get(key, key)
+
 class HelloGitHubParser:
     """Parser for HelloGitHub markdown content"""
     
@@ -39,9 +111,14 @@ class HelloGitHubParser:
         self.base_path = base_path
         self.content_path = os.path.join(base_path, 'content')
         
-    def get_available_issues(self):
-        """Get list of all available issues"""
-        pattern = os.path.join(self.content_path, 'HelloGitHub*.md')
+    def get_available_issues(self, language='zh'):
+        """Get list of all available issues for specified language"""
+        if language == 'en':
+            pattern = os.path.join(self.content_path, 'en', 'HelloGitHub*.md')
+        else:
+            # For Chinese (zh) and Japanese (ja), use main content directory
+            pattern = os.path.join(self.content_path, 'HelloGitHub*.md')
+            
         files = glob.glob(pattern)
         issues = []
         
@@ -54,12 +131,22 @@ class HelloGitHubParser:
                     'number': issue_num,
                     'filename': filename,
                     'path': file_path,
-                    'language': 'zh'
+                    'language': language,
+                    'title': self.get_issue_title(issue_num, language)
                 })
         
         # Sort by issue number
         issues.sort(key=lambda x: x['number'], reverse=True)
         return issues
+    
+    def get_issue_title(self, issue_number, language='zh'):
+        """Get localized title for an issue"""
+        if language == 'zh':
+            return f"《HelloGitHub》第 {issue_number} 期"
+        elif language == 'en':
+            return f"HelloGitHub Issue #{issue_number}"
+        else:  # Japanese
+            return f"HelloGitHub 第 {issue_number} 号"
     
     def parse_issue_content(self, issue_number, language='zh'):
         """Parse content from a specific issue"""
@@ -231,9 +318,56 @@ def generate_statistics():
     
     return stats
 
+# Language switching and helper functions
+@app.route('/set_language/<language>')
+def set_language(language):
+    """Set user's preferred language"""
+    if language in LANGUAGES:
+        session['language'] = language
+    return redirect(request.referrer or url_for('index'))
+
+@app.context_processor
+def inject_globals():
+    """Inject global variables into all templates"""
+    return {
+        'current_language': get_language(),
+        'languages': LANGUAGES,
+        'get_translation': get_translation
+    }
+
+# GitHub Bot Simulation Functions
+def simulate_github_bot_activity():
+    """Simulate GitHub bot activity for demonstration"""
+    return {
+        'status': 'active',
+        'events_monitored': 247,
+        'repositories_tracked': 156,
+        'notifications_sent': 23,
+        'trending_projects': [
+            {'name': 'awesome-project', 'stars': 1234, 'language': 'Python'},
+            {'name': 'cool-tool', 'stars': 567, 'language': 'JavaScript'},
+            {'name': 'useful-lib', 'stars': 890, 'language': 'Go'}
+        ],
+        'last_activity': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+# Content Generator Functions  
+def simulate_content_generation(issue_number, template_type='standard'):
+    """Simulate content generation for demonstration"""
+    return {
+        'issue_number': issue_number,
+        'template_type': template_type,
+        'generated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'sections': ['C 项目', 'C# 项目', 'C++ 项目', 'Python 项目', 'JavaScript 项目'],
+        'total_projects': 45,
+        'estimated_length': '8,500 字',
+        'status': 'success'
+    }
+
 @app.route('/')
 def index():
     """Main page showing overview and latest issues"""
+    lang = get_language()
     latest_issues = sorted(issues_cache.keys(), reverse=True)[:6]
     latest_projects = []
     
@@ -395,6 +529,57 @@ def api_search():
                 break
     
     return jsonify(results)
+
+@app.route('/github_bot')
+def github_bot():
+    """GitHub Bot demonstration page"""
+    bot_data = simulate_github_bot_activity()
+    return render_template('github_bot.html', bot_data=bot_data)
+
+@app.route('/content_generator')
+def content_generator():
+    """Content Generator demonstration page"""
+    return render_template('content_generator.html')
+
+@app.route('/generate_content', methods=['POST'])
+def generate_content():
+    """Generate sample content demonstration"""
+    issue_number = request.form.get('issue_number', type=int)
+    template_type = request.form.get('template_type', 'standard')
+    
+    if not issue_number:
+        return jsonify({'error': '请输入期刊号码'}), 400
+    
+    generation_result = simulate_content_generation(issue_number, template_type)
+    return jsonify(generation_result)
+
+@app.route('/api/bot_status')
+def api_bot_status():
+    """API endpoint for GitHub bot status"""
+    return jsonify(simulate_github_bot_activity())
+
+@app.route('/screenshot')
+def screenshot_demo():
+    """Screenshot demonstration page"""
+    return render_template('screenshot.html')
+
+@app.route('/take_screenshot', methods=['POST'])
+def take_screenshot():
+    """Take screenshot of specified page (demonstration)"""
+    page_url = request.form.get('page_url', '/')
+    element_selector = request.form.get('element_selector', '')
+    
+    # Simulate screenshot taking
+    screenshot_info = {
+        'url': page_url,
+        'selector': element_selector,
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'filename': f'screenshot_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png',
+        'size': {'width': 1200, 'height': 800},
+        'status': 'success'
+    }
+    
+    return jsonify(screenshot_info)
 
 # Template functions
 @app.template_filter('markdown')

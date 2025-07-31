@@ -267,7 +267,7 @@ class HelloGitHubParser:
             if any(keyword in text_lower for keyword in keywords):
                 return lang
         
-        return "其他"
+        return get_translation("other")
 
 def load_all_data():
     """Load all issue and project data into cache"""

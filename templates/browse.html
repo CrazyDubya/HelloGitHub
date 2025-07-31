@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}浏览期刊 - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="breadcrumb-item active">浏览期刊</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-list me-3"></i>HelloGitHub 期刊
+                </h1>
+                <p class="lead text-muted">
+                    浏览所有 HelloGitHub 月刊，发现有趣的开源项目
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Issues Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for issue in issues %}
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 issue-card">
+                    <div class="card-body text-center d-flex flex-column">
+                        <div class="issue-number mb-3 mx-auto">{{ issue.number }}</div>
+                        
+                        <h5 class="card-title">第 {{ issue.number }} 期</h5>
+                        
+                        <p class="card-text text-muted flex-grow-1">
+                            <i class="fas fa-folder me-1"></i>{{ issue.projects_count }} 个项目
+                        </p>
+                        
+                        <div class="mt-auto">
+                            <a href="{{ url_for('view_issue', issue_number=issue.number) }}" 
+                               class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>查看详情
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <nav aria-label="页面导航" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('browse', page=pagination.prev_num) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in range(1, pagination.pages + 1) %}
+                    {% if page_num <= 2 or page_num > pagination.pages - 2 or (page_num >= pagination.page - 1 and page_num <= pagination.page + 1) %}
+                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('browse', page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                    {% elif page_num == 3 or page_num == pagination.pages - 2 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('browse', page=pagination.next_num) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Quick Stats -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <h3 class="stat-number text-primary">{{ pagination.total }}</h3>
+                    <p class="text-muted mb-0">总期数</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <h3 class="stat-number text-success">{{ pagination.page }}</h3>
+                    <p class="text-muted mb-0">当前页</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <h3 class="stat-number text-info">{{ pagination.per_page }}</h3>
+                    <p class="text-muted mb-0">每页显示</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.issue-card {
+    transition: all 0.3s ease;
+}
+
+.issue-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.issue-number {
+    font-size: 1.5rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effect to cards
+    const cards = document.querySelectorAll('.issue-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.borderColor = 'var(--primary-color)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'var(--border-color)';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+
+{% block title %}工具箱 - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="breadcrumb-item active">工具箱</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-tools me-3"></i>HelloGitHub 工具箱
+                </h1>
+                <p class="lead text-muted">
+                    探索 HelloGitHub 项目背后的工具和功能演示
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tools Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Content Generator -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="tool-icon bg-primary text-white rounded-circle me-3">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">内容生成器</h5>
+                                <small class="text-muted">基于模板生成月刊内容</small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            HelloGitHub 使用 Python 脚本自动生成月刊内容，通过模板系统确保格式统一。
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>功能特点:</h6>
+                            <ul class="small">
+                                <li>模板化内容生成</li>
+                                <li>统一格式管理</li>
+                                <li>批量处理支持</li>
+                                <li>自动编号和链接</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contentGeneratorModal">
+                                <i class="fas fa-play me-2"></i>演示内容生成
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GitHub Bot -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="tool-icon bg-success text-white rounded-circle me-3">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">GitHub 监控机器人</h5>
+                                <small class="text-muted">监控 GitHub 活动和热门项目</small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            自动监控 GitHub 上的 star 活动，筛选热门项目并发送邮件通知。
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>功能特点:</h6>
+                            <ul class="small">
+                                <li>GitHub API 集成</li>
+                                <li>热门项目筛选</li>
+                                <li>邮件通知系统</li>
+                                <li>数据统计分析</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#githubBotModal">
+                                <i class="fas fa-robot me-2"></i>查看机器人信息
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Translation Tools -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="tool-icon bg-info text-white rounded-circle me-3">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">多语言支持</h5>
+                                <small class="text-muted">中文、英文、日文内容管理</small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            HelloGitHub 支持多语言版本，为全球开发者提供本地化内容。
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>支持语言:</h6>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-primary">中文 (简体)</span>
+                                <span class="badge bg-success">English</span>
+                                <span class="badge bg-info">日本語</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#translationModal">
+                                <i class="fas fa-globe me-2"></i>查看翻译示例
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Analysis -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="tool-icon bg-warning text-white rounded-circle me-3">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-0">数据分析工具</h5>
+                                <small class="text-muted">项目数据统计和可视化</small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">
+                            分析 HelloGitHub 收录的项目数据，生成有价值的统计信息和趋势分析。
+                        </p>
+                        
+                        <div class="mb-3">
+                            <h6>分析维度:</h6>
+                            <ul class="small">
+                                <li>编程语言分布</li>
+                                <li>项目分类统计</li>
+                                <li>时间趋势分析</li>
+                                <li>热度指标计算</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="{{ url_for('statistics') }}" class="btn btn-warning">
+                                <i class="fas fa-chart-bar me-2"></i>查看完整统计
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- API Documentation -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-code me-2"></i>API 文档
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="badge bg-success me-2">GET</span>
+                            /api/stats
+                        </h5>
+                        <p class="card-text">获取完整的统计数据，包括项目数量、语言分布、分类信息等。</p>
+                        
+                        <h6>响应示例:</h6>
+                        <pre class="bg-light p-2 small"><code>{
+  "total_projects": 2456,
+  "total_issues": 112,
+  "projects_by_language": {
+    "Python": 456,
+    "JavaScript": 389,
+    ...
+  }
+}</code></pre>
+                        
+                        <a href="/api/stats" target="_blank" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>测试 API
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="badge bg-primary me-2">GET</span>
+                            /api/search
+                        </h5>
+                        <p class="card-text">搜索项目，支持关键词过滤和结果限制。</p>
+                        
+                        <h6>查询参数:</h6>
+                        <ul class="small">
+                            <li><code>q</code> - 搜索关键词</li>
+                            <li><code>limit</code> - 结果数量限制 (默认: 10)</li>
+                        </ul>
+                        
+                        <h6>使用示例:</h6>
+                        <code class="small">/api/search?q=Python&limit=5</code>
+                        
+                        <br><br>
+                        <a href="/api/search?q=Python&limit=3" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>测试 API
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-layer-group me-2"></i>技术栈
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <div class="tech-item">
+                    <i class="fab fa-python fa-3x text-primary mb-2"></i>
+                    <h5>Python</h5>
+                    <p class="small text-muted">后端逻辑和数据处理</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="tech-item">
+                    <i class="fas fa-fire fa-3x text-danger mb-2"></i>
+                    <h5>Flask</h5>
+                    <p class="small text-muted">轻量级 Web 框架</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="tech-item">
+                    <i class="fab fa-bootstrap fa-3x text-purple mb-2"></i>
+                    <h5>Bootstrap</h5>
+                    <p class="small text-muted">响应式 UI 框架</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="tech-item">
+                    <i class="fab fa-github fa-3x text-dark mb-2"></i>
+                    <h5>GitHub API</h5>
+                    <p class="small text-muted">数据源和集成</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+<!-- Modals -->
+<!-- Content Generator Modal -->
+<div class="modal fade" id="contentGeneratorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-file-alt me-2"></i>内容生成器演示
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>HelloGitHub 的内容生成器通过以下步骤工作:</p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-1 me-2"></i>模板准备</h6>
+                                <p class="small">使用统一的 Markdown 模板，包含变量占位符</p>
+                                <code class="small">{{ "{{ hello_github_content }}" }}</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-2 me-2"></i>内容注入</h6>
+                                <p class="small">将项目内容替换到模板变量中</p>
+                                <code class="small">python make_content.py 112</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-3 me-2"></i>格式化处理</h6>
+                                <p class="small">自动处理链接、图片和格式</p>
+                                <small class="text-muted">统一样式和结构</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-4 me-2"></i>输出生成</h6>
+                                <p class="small">生成最终的 Markdown 文件</p>
+                                <small class="text-muted">ready for publication</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>脚本使用示例:</h6>
+                    <pre class="bg-light p-3"><code># 生成第112期内容
+python script/make_content/make_content.py 112
+
+# 生成所有期数内容
+python script/make_content/make_content.py all</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GitHub Bot Modal -->
+<div class="modal fade" id="githubBotModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fab fa-github me-2"></i>GitHub 监控机器人
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>GitHub 机器人自动监控和分析 GitHub 活动，识别热门项目。</p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-eye me-2"></i>监控功能</h6>
+                        <ul class="small">
+                            <li>用户 star 活动跟踪</li>
+                            <li>项目热度评估</li>
+                            <li>实时数据收集</li>
+                            <li>API 请求管理</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-filter me-2"></i>筛选条件</h6>
+                        <ul class="small">
+                            <li>最低 star 数量: 100</li>
+                            <li>活动时间窗口: 1天</li>
+                            <li>排除自己的项目</li>
+                            <li>去重处理</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>邮件通知格式:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>头像</th>
+                                    <th>用户名</th>
+                                    <th>项目名</th>
+                                    <th>时间</th>
+                                    <th>Star数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><i class="fas fa-user-circle"></i></td>
+                                    <td>developer</td>
+                                    <td>awesome-project</td>
+                                    <td>2024-01-01</td>
+                                    <td>🌟 1,234</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>注意:</strong> 机器人需要配置 GitHub API 密钥和邮件服务器信息才能正常工作。
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Translation Modal -->
+<div class="modal fade" id="translationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-language me-2"></i>多语言支持
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>HelloGitHub 提供多语言版本，让全世界的开发者都能享受开源项目的乐趣。</p>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="nav nav-tabs" id="languageTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="chinese-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#chinese" type="button">
+                                    🇨🇳 中文
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="english-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#english" type="button">
+                                    🇺🇸 English
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="japanese-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#japanese" type="button">
+                                    🇯🇵 日本語
+                                </button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content mt-3" id="languageTabContent">
+                            <div class="tab-pane fade show active" id="chinese">
+                                <h6>中文 (简体)</h6>
+                                <p>分享 GitHub 上有趣、入门级的开源项目。兴趣是最好的老师，HelloGitHub 让你对开源感兴趣！</p>
+                                <small class="text-muted">原始版本，内容最全面</small>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="english">
+                                <h6>English</h6>
+                                <p>Sharing interesting, beginner-friendly open-source projects from GitHub. Interest is the best teacher—HelloGitHub helps you discover the joy of open source!</p>
+                                <small class="text-muted">English translation for global audience</small>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="japanese">
+                                <h6>日本語</h6>
+                                <p>GitHubから面白くて初心者向けのオープンソースプロジェクトを共有します。興味は最高の先生です。HelloGitHubはオープンソースの楽しさを発見するのに役立ちます！</p>
+                                <small class="text-muted">Japanese translation for Japanese developers</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6>文件结构:</h6>
+                    <pre class="bg-light p-3 small"><code>content/
+├── HelloGitHub01.md (中文)
+├── HelloGitHub02.md
+├── ...
+└── en/
+    ├── HelloGitHub01.md (English)
+    ├── HelloGitHub02.md
+    └── ...</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<style>
+.tool-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.tech-item {
+    padding: 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.tech-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.text-purple {
+    color: #7c3aed !important;
+}
+
+pre {
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.modal-lg {
+    max-width: 800px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+
+{% block title %}统计数据 - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="breadcrumb-item active">统计数据</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-chart-bar me-3"></i>HelloGitHub 统计分析
+                </h1>
+                <p class="lead text-muted">
+                    深入了解 HelloGitHub 项目数据和发展趋势
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Overview Stats -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-newspaper fa-3x text-primary mb-3"></i>
+                        <h3 class="stat-number">{{ stats.total_issues }}</h3>
+                        <h6 class="text-muted">总期数</h6>
+                        <p class="small text-muted">从第1期到第{{ stats.latest_issue }}期</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-folder fa-3x text-success mb-3"></i>
+                        <h3 class="stat-number">{{ stats.total_projects }}</h3>
+                        <h6 class="text-muted">收录项目</h6>
+                        <p class="small text-muted">平均每期 {{ "%.1f"|format(stats.total_projects / stats.total_issues) }} 个项目</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-info mb-3"></i>
+                        <h3 class="stat-number">{{ stats.projects_by_language|length }}</h3>
+                        <h6 class="text-muted">编程语言</h6>
+                        <p class="small text-muted">涵盖主流技术栈</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tags fa-3x text-warning mb-3"></i>
+                        <h3 class="stat-number">{{ stats.projects_by_category|length }}</h3>
+                        <h6 class="text-muted">项目分类</h6>
+                        <p class="small text-muted">多样化的项目类型</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Language Distribution -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-code me-2"></i>编程语言分布
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="languageChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">语言排行榜</h5>
+                        <div class="language-list">
+                            {% for language, count in stats.projects_by_language.items() | sort(attribute=1, reverse=True) %}
+                            {% if loop.index <= 10 %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge language-badge bg-secondary">{{ language }}</span>
+                                <div class="flex-grow-1 mx-3">
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar" style="width: {{ (count / stats.projects_by_language.values() | max * 100) | round(1) }}%"></div>
+                                    </div>
+                                </div>
+                                <span class="text-muted">{{ count }}</span>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Distribution -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-tags me-2"></i>项目分类分布
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="categoryChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">热门分类</h5>
+                        <div class="category-list">
+                            {% for category, count in stats.projects_by_category.items() | sort(attribute=1, reverse=True) %}
+                            {% if loop.index <= 8 %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small fw-bold">{{ category }}</span>
+                                    <span class="badge bg-primary">{{ count }}</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" 
+                                         style="width: {{ (count / stats.projects_by_category.values() | max * 100) | round(1) }}%"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Issue Timeline -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-timeline me-2"></i>期刊发展趋势
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="timelineChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h4 class="text-primary">{{ stats.projects_by_issue.values() | max }}</h4>
+                        <p class="text-muted mb-0">单期最多项目数</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h4 class="text-success">{{ "%.1f"|format(stats.total_projects / stats.total_issues) }}</h4>
+                        <p class="text-muted mb-0">平均每期项目数</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h4 class="text-info">{{ stats.projects_by_issue.values() | min }}</h4>
+                        <p class="text-muted mb-0">单期最少项目数</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- API Info -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="fas fa-code me-2"></i>数据 API
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-bar me-2"></i>统计数据 API
+                        </h5>
+                        <p class="card-text">获取完整的统计数据信息</p>
+                        <code>GET /api/stats</code>
+                        <br><br>
+                        <a href="/api/stats" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>查看数据
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-search me-2"></i>搜索 API
+                        </h5>
+                        <p class="card-text">搜索项目并获取 JSON 格式结果</p>
+                        <code>GET /api/search?q=关键词&limit=10</code>
+                        <br><br>
+                        <a href="/api/search?q=Python&limit=5" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>示例请求
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Language Chart
+    const languageCtx = document.getElementById('languageChart').getContext('2d');
+    const languageData = {{ stats.projects_by_language | tojson }};
+    const topLanguages = Object.entries(languageData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+    
+    new Chart(languageCtx, {
+        type: 'doughnut',
+        data: {
+            labels: topLanguages.map(item => item[0]),
+            datasets: [{
+                data: topLanguages.map(item => item[1]),
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                    '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
+                    '#4BC0C0', '#FF6384'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: '编程语言分布 (前10名)'
+                }
+            }
+        }
+    });
+    
+    // Category Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryData = {{ stats.projects_by_category | tojson }};
+    const topCategories = Object.entries(categoryData)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+    
+    new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: topCategories.map(item => item[0]),
+            datasets: [{
+                label: '项目数量',
+                data: topCategories.map(item => item[1]),
+                backgroundColor: '#36A2EB',
+                borderColor: '#2563eb',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: '项目分类分布 (前8名)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Timeline Chart
+    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+    const issueData = {{ stats.projects_by_issue | tojson }};
+    const sortedIssues = Object.entries(issueData)
+        .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+        .slice(-30); // Last 30 issues
+    
+    new Chart(timelineCtx, {
+        type: 'line',
+        data: {
+            labels: sortedIssues.map(item => `第${item[0]}期`),
+            datasets: [{
+                label: '项目数量',
+                data: sortedIssues.map(item => item[1]),
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: '近期期刊项目数量趋势'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Animate numbers
+    function animateNumber(element, target) {
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 30);
+    }
+    
+    // Animate stat numbers on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.textContent);
+                animateNumber(entry.target, target);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+    
+    document.querySelectorAll('.stat-number').forEach(num => {
+        observer.observe(num);
+    });
+});
+</script>
+{% endblock %}

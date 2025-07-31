@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}搜索项目 - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="breadcrumb-item active">搜索项目</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-search me-3"></i>搜索开源项目
+                </h1>
+                <p class="lead text-muted">
+                    在 HelloGitHub 收录的所有项目中搜索感兴趣的内容
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Form -->
+<section class="py-4 bg-white border-bottom">
+    <div class="container">
+        <form method="GET" action="{{ url_for('search') }}">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="search-input" class="form-label">关键词搜索</label>
+                    <input type="text" class="form-control" id="search-input" name="q" 
+                           value="{{ query }}" placeholder="输入项目名称或描述...">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="language-select" class="form-label">编程语言</label>
+                    <select class="form-select" id="language-select" name="language">
+                        <option value="">所有语言</option>
+                        {% for lang in languages %}
+                        <option value="{{ lang }}" {% if lang == selected_language %}selected{% endif %}>
+                            {{ lang }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="category-select" class="form-label">项目分类</label>
+                    <select class="form-select" id="category-select" name="category">
+                        <option value="">所有分类</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>
+                            {{ cat }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>搜索
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Search Results -->
+<section class="py-5">
+    <div class="container">
+        {% if query or selected_language or selected_category %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>
+                <i class="fas fa-list-ul me-2"></i>搜索结果
+                <span class="text-muted small">({{ pagination.total }} 个项目)</span>
+            </h3>
+            
+            {% if pagination.total > 0 %}
+            <div class="d-flex gap-2">
+                <small class="text-muted align-self-center">
+                    显示第 {{ (pagination.page - 1) * pagination.per_page + 1 }} - 
+                    {{ pagination.page * pagination.per_page if pagination.page * pagination.per_page < pagination.total else pagination.total }} 项
+                </small>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Active Filters -->
+        {% if query or selected_language or selected_category %}
+        <div class="mb-4">
+            <small class="text-muted">活跃筛选条件:</small>
+            <div class="d-flex flex-wrap gap-2 mt-1">
+                {% if query %}
+                <span class="badge bg-primary">
+                    关键词: {{ query }}
+                    <a href="{{ url_for('search', language=selected_language, category=selected_category) }}" 
+                       class="text-white ms-1">×</a>
+                </span>
+                {% endif %}
+                
+                {% if selected_language %}
+                <span class="badge bg-success">
+                    语言: {{ selected_language }}
+                    <a href="{{ url_for('search', q=query, category=selected_category) }}" 
+                       class="text-white ms-1">×</a>
+                </span>
+                {% endif %}
+                
+                {% if selected_category %}
+                <span class="badge bg-info">
+                    分类: {{ selected_category }}
+                    <a href="{{ url_for('search', q=query, language=selected_language) }}" 
+                       class="text-white ms-1">×</a>
+                </span>
+                {% endif %}
+                
+                <a href="{{ url_for('search') }}" class="badge bg-secondary text-decoration-none">
+                    <i class="fas fa-times me-1"></i>清除所有
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Results -->
+        {% if results %}
+        <div class="row g-4">
+            {% for project in results %}
+            <div class="col-lg-6">
+                <div class="card project-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title mb-0">
+                                {% if project.url %}
+                                <a href="{{ project.url }}" target="_blank" 
+                                   class="text-decoration-none text-primary">
+                                    {{ project.title }}
+                                    <i class="fas fa-external-link-alt ms-1 small"></i>
+                                </a>
+                                {% else %}
+                                {{ project.title }}
+                                {% endif %}
+                            </h5>
+                            
+                            <div class="d-flex align-items-center gap-2">
+                                <small class="text-muted">第{{ project.issue_number }}期</small>
+                                {% if project.github_repo %}
+                                <a href="https://github.com/{{ project.github_repo }}" 
+                                   target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <p class="card-text text-muted">
+                            {{ project.description | truncate_words(30) }}
+                        </p>
+                        
+                        <div class="d-flex flex-wrap gap-2 mt-auto">
+                            {% if project.language %}
+                            <span class="badge language-badge bg-secondary">
+                                <i class="fas fa-code me-1"></i>{{ project.language }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if project.category %}
+                            <span class="badge category-badge">
+                                {{ project.category }}
+                            </span>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('view_issue', issue_number=project.issue_number) }}" 
+                               class="badge bg-outline-primary text-decoration-none">
+                                <i class="fas fa-eye me-1"></i>查看期刊
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <nav aria-label="页面导航" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('search', q=query, language=selected_language, category=selected_category, page=pagination.prev_num) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in range(1, pagination.pages + 1) %}
+                    {% if page_num <= 2 or page_num > pagination.pages - 2 or (page_num >= pagination.page - 1 and page_num <= pagination.page + 1) %}
+                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('search', q=query, language=selected_language, category=selected_category, page=page_num) }}">{{ page_num }}</a>
+                    </li>
+                    {% elif page_num == 3 or page_num == pagination.pages - 2 %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('search', q=query, language=selected_language, category=selected_category, page=pagination.next_num) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+        {% elif query or selected_language or selected_category %}
+        <!-- No Results -->
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-muted mb-3"></i>
+            <h4>未找到匹配的项目</h4>
+            <p class="text-muted">尝试调整搜索条件或使用不同的关键词</p>
+            <a href="{{ url_for('search') }}" class="btn btn-primary">
+                <i class="fas fa-refresh me-1"></i>重新搜索
+            </a>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <!-- Initial State -->
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-4x text-primary mb-3"></i>
+            <h4>开始搜索开源项目</h4>
+            <p class="text-muted">输入关键词或选择筛选条件来查找感兴趣的项目</p>
+            
+            <!-- Popular Searches -->
+            <div class="mt-4">
+                <h6>热门搜索:</h6>
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+                    <a href="{{ url_for('search', q='Python') }}" class="badge bg-primary text-decoration-none">Python</a>
+                    <a href="{{ url_for('search', q='JavaScript') }}" class="badge bg-primary text-decoration-none">JavaScript</a>
+                    <a href="{{ url_for('search', q='机器学习') }}" class="badge bg-primary text-decoration-none">机器学习</a>
+                    <a href="{{ url_for('search', q='工具') }}" class="badge bg-primary text-decoration-none">工具</a>
+                    <a href="{{ url_for('search', q='游戏') }}" class="badge bg-primary text-decoration-none">游戏</a>
+                    <a href="{{ url_for('search', q='Web') }}" class="badge bg-primary text-decoration-none">Web</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form on filter change
+    const languageSelect = document.getElementById('language-select');
+    const categorySelect = document.getElementById('category-select');
+    
+    [languageSelect, categorySelect].forEach(select => {
+        select.addEventListener('change', function() {
+            // Auto-submit if there's already a query or other filters
+            const form = this.closest('form');
+            const formData = new FormData(form);
+            const hasFilters = Array.from(formData.entries()).some(([key, value]) => value.trim() !== '');
+            
+            if (hasFilters) {
+                form.submit();
+            }
+        });
+    });
+    
+    // Search suggestions (simple implementation)
+    const searchInput = document.getElementById('search-input');
+    let debounceTimer;
+    
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+        
+        if (query.length >= 2) {
+            debounceTimer = setTimeout(() => {
+                fetchSearchSuggestions(query);
+            }, 300);
+        }
+    });
+    
+    function fetchSearchSuggestions(query) {
+        fetch(`/api/search?q=${encodeURIComponent(query)}&limit=5`)
+            .then(response => response.json())
+            .then(data => {
+                // Simple implementation - could be enhanced with a proper dropdown
+                console.log('Search suggestions:', data);
+            })
+            .catch(error => console.error('Error fetching suggestions:', error));
+    }
+    
+    // Highlight search terms in results
+    const searchQuery = "{{ query }}".toLowerCase();
+    if (searchQuery) {
+        document.querySelectorAll('.card-title, .card-text').forEach(element => {
+            highlightText(element, searchQuery);
+        });
+    }
+    
+    function highlightText(element, query) {
+        if (!query) return;
+        
+        const text = element.textContent;
+        const regex = new RegExp(`(${query})`, 'gi');
+        
+        if (regex.test(text)) {
+            element.innerHTML = text.replace(regex, '<mark>$1</mark>');
+        }
+    }
+});
+</script>
+
+<style>
+mark {
+    background-color: #fff3cd;
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
+.badge {
+    font-size: 0.8em;
+}
+
+.project-card {
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

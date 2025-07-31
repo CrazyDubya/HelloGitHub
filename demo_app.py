@@ -309,7 +309,7 @@ def generate_statistics():
         stats['projects_by_language'][lang] = stats['projects_by_language'].get(lang, 0) + 1
         
         # Category statistics  
-        cat = project.get('category', '未分类')
+        cat = project.get('category', get_translation('uncategorized'))
         stats['projects_by_category'][cat] = stats['projects_by_category'].get(cat, 0) + 1
         
         # Issue statistics

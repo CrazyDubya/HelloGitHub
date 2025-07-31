@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}{{ get_translation('content_generator') }} - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-4">
+                <i class="fas fa-file-alt me-3"></i>{{ get_translation('content_generator') }}
+            </h1>
+            <p class="lead mb-4">
+                {% if current_language == 'zh' %}
+                演示 HelloGitHub 内容生成工具，用于自动生成期刊内容和模板处理
+                {% elif current_language == 'en' %}
+                Demonstration of HelloGitHub content generation tools for automatic issue content generation and template processing
+                {% else %}
+                HelloGitHub コンテンツ生成ツールのデモ。自動号コンテンツ生成とテンプレート処理用
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Content Generation Form -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-magic me-2"></i>
+                        {% if current_language == 'zh' %}
+                        生成新期刊内容
+                        {% elif current_language == 'en' %}
+                        Generate New Issue Content
+                        {% else %}
+                        新しい号のコンテンツを生成
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="contentGeneratorForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    {% if current_language == 'zh' %}
+                                    期刊号码
+                                    {% elif current_language == 'en' %}
+                                    Issue Number
+                                    {% else %}
+                                    号番号
+                                    {% endif %}
+                                </label>
+                                <input type="number" class="form-control" id="issueNumber" min="1" max="200" value="113" required>
+                                <small class="form-text text-muted">
+                                    {% if current_language == 'zh' %}
+                                    输入要生成的期刊号码 (1-200)
+                                    {% elif current_language == 'en' %}
+                                    Enter the issue number to generate (1-200)
+                                    {% else %}
+                                    生成する号番号を入力 (1-200)
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    {% if current_language == 'zh' %}
+                                    模板类型
+                                    {% elif current_language == 'en' %}
+                                    Template Type
+                                    {% else %}
+                                    テンプレートタイプ
+                                    {% endif %}
+                                </label>
+                                <select class="form-select" id="templateType">
+                                    <option value="standard">
+                                        {% if current_language == 'zh' %}
+                                        标准模板
+                                        {% elif current_language == 'en' %}
+                                        Standard Template
+                                        {% else %}
+                                        標準テンプレート
+                                        {% endif %}
+                                    </option>
+                                    <option value="featured">
+                                        {% if current_language == 'zh' %}
+                                        精选模板
+                                        {% elif current_language == 'en' %}
+                                        Featured Template
+                                        {% else %}
+                                        注目テンプレート
+                                        {% endif %}
+                                    </option>
+                                    <option value="minimal">
+                                        {% if current_language == 'zh' %}
+                                        简化模板
+                                        {% elif current_language == 'en' %}
+                                        Minimal Template
+                                        {% else %}
+                                        シンプルテンプレート
+                                        {% endif %}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label class="form-label">
+                                    {% if current_language == 'zh' %}
+                                    包含分类
+                                    {% elif current_language == 'en' %}
+                                    Include Categories
+                                    {% else %}
+                                    含めるカテゴリ
+                                    {% endif %}
+                                </label>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catPython" checked>
+                                            <label class="form-check-label" for="catPython">Python</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catJavaScript" checked>
+                                            <label class="form-check-label" for="catJavaScript">JavaScript</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catJava" checked>
+                                            <label class="form-check-label" for="catJava">Java</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catGo" checked>
+                                            <label class="form-check-label" for="catGo">Go</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catC" checked>
+                                            <label class="form-check-label" for="catC">C/C++</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catRust" checked>
+                                            <label class="form-check-label" for="catRust">Rust</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="catOther" checked>
+                                            <label class="form-check-label" for="catOther">
+                                                {% if current_language == 'zh' %}
+                                                其他
+                                                {% elif current_language == 'en' %}
+                                                Others
+                                                {% else %}
+                                                その他
+                                                {% endif %}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+                            <i class="fas fa-magic me-2"></i>
+                            {% if current_language == 'zh' %}
+                            生成内容
+                            {% elif current_language == 'en' %}
+                            Generate Content
+                            {% else %}
+                            コンテンツ生成
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Generation Options -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {% if current_language == 'zh' %}
+                        生成选项
+                        {% elif current_language == 'en' %}
+                        Generation Options
+                        {% else %}
+                        生成オプション
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <h6>
+                        {% if current_language == 'zh' %}
+                        可用功能:
+                        {% elif current_language == 'en' %}
+                        Available Features:
+                        {% else %}
+                        利用可能な機能:
+                        {% endif %}
+                    </h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            自动分类项目
+                            {% elif current_language == 'en' %}
+                            Auto-categorize projects
+                            {% else %}
+                            プロジェクトの自動分類
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            生成目录结构
+                            {% elif current_language == 'en' %}
+                            Generate table of contents
+                            {% else %}
+                            目次の生成
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            模板变量替换
+                            {% elif current_language == 'en' %}
+                            Template variable replacement
+                            {% else %}
+                            テンプレート変数の置換
+                            {% endif %}
+                        </li>
+                        <li><i class="fas fa-check text-success me-2"></i>
+                            {% if current_language == 'zh' %}
+                            多语言支持
+                            {% elif current_language == 'en' %}
+                            Multi-language support
+                            {% else %}
+                            多言語サポート
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generation Result -->
+    <div class="row" id="generationResult" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        {% if current_language == 'zh' %}
+                        生成结果
+                        {% elif current_language == 'en' %}
+                        Generation Result
+                        {% else %}
+                        生成結果
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body" id="resultContent">
+                    <!-- Result will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Preview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-eye me-2"></i>
+                        {% if current_language == 'zh' %}
+                        模板预览
+                        {% elif current_language == 'en' %}
+                        Template Preview
+                        {% else %}
+                        テンプレートプレビュー
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="template-preview bg-light p-3 rounded" style="font-family: 'Courier New', monospace;">
+                        <pre><code># 《HelloGitHub》第 {{ hello_github_num }} 期
+> 兴趣是最好的老师，**HelloGitHub** 让你对编程感兴趣！
+
+<p align="center">
+  <a href="https://hellogithub.com"><img src="https://cdn.jsdelivr.net/gh/521xueweihan/img_logo@main/logo/readme.gif" alt="HelloGitHub Logo" width="300px" /></a>
+</p>
+
+## 目录
+
+{% raw %}{{ hello_github_content }}{% endraw %}
+
+## 声明
+如果你发现了好玩、有意义的开源项目，[点击这里](https://hellogithub.com/periodical) 分享你觉得有意思的项目。</code></pre>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        {% if current_language == 'zh' %}
+                        这是一个模板示例，实际生成时会替换相应的变量
+                        {% elif current_language == 'en' %}
+                        This is a template example, variables will be replaced during actual generation
+                        {% else %}
+                        これはテンプレートの例です。実際の生成時に変数が置換されます
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('contentGeneratorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const generateBtn = document.getElementById('generateBtn');
+    const originalText = generateBtn.innerHTML;
+    
+    // Show loading state
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ get_translation("generating") if current_language == "zh" else "Generating..." if current_language == "en" else "生成中..." }}';
+    generateBtn.disabled = true;
+    
+    // Gather form data
+    const formData = new FormData();
+    formData.append('issue_number', document.getElementById('issueNumber').value);
+    formData.append('template_type', document.getElementById('templateType').value);
+    
+    // Simulate generation process
+    fetch('/generate_content', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show result
+        document.getElementById('generationResult').style.display = 'block';
+        document.getElementById('resultContent').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>{% if current_language == "zh" %}生成信息{% elif current_language == "en" %}Generation Info{% else %}生成情報{% endif %}</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>{% if current_language == "zh" %}期刊号码{% elif current_language == "en" %}Issue Number{% else %}号番号{% endif %}:</strong> ${data.issue_number}</li>
+                        <li><strong>{% if current_language == "zh" %}模板类型{% elif current_language == "en" %}Template Type{% else %}テンプレートタイプ{% endif %}:</strong> ${data.template_type}</li>
+                        <li><strong>{% if current_language == "zh" %}生成时间{% elif current_language == "en" %}Generated At{% else %}生成時刻{% endif %}:</strong> ${data.generated_at}</li>
+                        <li><strong>{% if current_language == "zh" %}状态{% elif current_language == "en" %}Status{% else %}ステータス{% endif %}:</strong> <span class="badge bg-success">${data.status}</span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>{% if current_language == "zh" %}内容统计{% elif current_language == "en" %}Content Statistics{% else %}コンテンツ統計{% endif %}</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>{% if current_language == "zh" %}总项目数{% elif current_language == "en" %}Total Projects{% else %}総プロジェクト数{% endif %}:</strong> ${data.total_projects}</li>
+                        <li><strong>{% if current_language == "zh" %}预估长度{% elif current_language == "en" %}Estimated Length{% else %}推定長さ{% endif %}:</strong> ${data.estimated_length}</li>
+                        <li><strong>{% if current_language == "zh" %}分类数量{% elif current_language == "en" %}Categories{% else %}カテゴリ数{% endif %}:</strong> ${data.sections.length}</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <h6>{% if current_language == "zh" %}包含分类{% elif current_language == "en" %}Included Sections{% else %}含まれるセクション{% endif %}</h6>
+            <div class="d-flex flex-wrap gap-2">
+                ${data.sections.map(section => `<span class="badge bg-primary">${section}</span>`).join('')}
+            </div>
+        `;
+        
+        // Scroll to result
+        document.getElementById('generationResult').scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('{% if current_language == "zh" %}生成失败，请重试{% elif current_language == "en" %}Generation failed, please try again{% else %}生成に失敗しました。再試行してください{% endif %}');
+    })
+    .finally(() => {
+        // Reset button
+        generateBtn.innerHTML = originalText;
+        generateBtn.disabled = false;
+    });
+});
+</script>
+{% endblock %}

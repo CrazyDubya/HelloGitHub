@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}{{ get_translation('github_bot') }} - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold mb-4">
+                <i class="fab fa-github me-3"></i>{{ get_translation('github_bot') }}
+            </h1>
+            <p class="lead mb-4">
+                {% if current_language == 'zh' %}
+                演示 HelloGitHub GitHub 机器人功能，包括监控开源项目、发送通知和分析趋势
+                {% elif current_language == 'en' %}
+                Demonstration of HelloGitHub GitHub bot functionality, including monitoring open source projects, sending notifications, and analyzing trends
+                {% else %}
+                HelloGitHub GitHub ボットの機能デモ。オープンソースプロジェクトの監視、通知の送信、トレンド分析を含む
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Bot Status -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-robot me-2"></i>
+                        {% if current_language == 'zh' %}
+                        机器人状态
+                        {% elif current_language == 'en' %}
+                        Bot Status
+                        {% else %}
+                        ボットステータス
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success rounded-circle me-3" style="width: 12px; height: 12px;"></div>
+                                <div>
+                                    <h6 class="mb-0">{{ bot_data.status|title }}</h6>
+                                    <small class="text-muted">
+                                        {% if current_language == 'zh' %}状态{% elif current_language == 'en' %}Status{% else %}ステータス{% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="mb-0">{{ bot_data.events_monitored }}</h6>
+                            <small class="text-muted">
+                                {% if current_language == 'zh' %}监控事件{% elif current_language == 'en' %}Events Monitored{% else %}監視イベント{% endif %}
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="mb-0">{{ bot_data.repositories_tracked }}</h6>
+                            <small class="text-muted">
+                                {% if current_language == 'zh' %}跟踪仓库{% elif current_language == 'en' %}Repositories Tracked{% else %}追跡リポジトリ{% endif %}
+                            </small>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="mb-0">{{ bot_data.notifications_sent }}</h6>
+                            <small class="text-muted">
+                                {% if current_language == 'zh' %}发送通知{% elif current_language == 'en' %}Notifications Sent{% else %}送信通知{% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                    <small class="text-muted">
+                        {% if current_language == 'zh' %}
+                        最后活动时间: {{ bot_data.last_activity }}
+                        {% elif current_language == 'en' %}
+                        Last Activity: {{ bot_data.last_activity }}
+                        {% else %}
+                        最終アクティビティ: {{ bot_data.last_activity }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trending Projects -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-fire me-2"></i>
+                        {% if current_language == 'zh' %}
+                        热门项目
+                        {% elif current_language == 'en' %}
+                        Trending Projects
+                        {% else %}
+                        トレンドプロジェクト
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for project in bot_data.trending_projects %}
+                        <div class="col-md-4 mb-3">
+                            <div class="border rounded p-3">
+                                <h6 class="mb-2">
+                                    <i class="fab fa-github me-2"></i>{{ project.name }}
+                                </h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-secondary">{{ project.language }}</span>
+                                    <span class="text-muted">
+                                        <i class="fas fa-star me-1"></i>{{ project.stars }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Configuration Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i>
+                        {% if current_language == 'zh' %}
+                        机器人配置演示
+                        {% elif current_language == 'en' %}
+                        Bot Configuration Demo
+                        {% else %}
+                        ボット設定デモ
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>
+                                {% if current_language == 'zh' %}
+                                监控设置
+                                {% elif current_language == 'en' %}
+                                Monitoring Settings
+                                {% else %}
+                                監視設定
+                                {% endif %}
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    监控新项目发布
+                                    {% elif current_language == 'en' %}
+                                    Monitor new project releases
+                                    {% else %}
+                                    新しいプロジェクトリリースの監視
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check text-success me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    跟踪 Star 变化
+                                    {% elif current_language == 'en' %}
+                                    Track star changes
+                                    {% else %}
+                                    Star変更の追跡
+                                    {% endif %}
+                                </li>
+                                <li><i class="fas fa-check text-success me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    检测趋势项目
+                                    {% elif current_language == 'en' %}
+                                    Detect trending projects
+                                    {% else %}
+                                    トレンドプロジェクトの検出
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>
+                                {% if current_language == 'zh' %}
+                                通知设置
+                                {% elif current_language == 'en' %}
+                                Notification Settings
+                                {% else %}
+                                通知設定
+                                {% endif %}
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-envelope text-info me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    邮件通知
+                                    {% elif current_language == 'en' %}
+                                    Email notifications
+                                    {% else %}
+                                    メール通知
+                                    {% endif %}
+                                </li>
+                                <li><i class="fab fa-slack text-info me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    Slack 集成
+                                    {% elif current_language == 'en' %}
+                                    Slack integration
+                                    {% else %}
+                                    Slack統合
+                                    {% endif %}
+                                </li>
+                                <li><i class="fab fa-webhook text-info me-2"></i>
+                                    {% if current_language == 'zh' %}
+                                    Webhook 调用
+                                    {% elif current_language == 'en' %}
+                                    Webhook calls
+                                    {% else %}
+                                    Webhook呼び出し
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Logs Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        {% if current_language == 'zh' %}
+                        最近活动日志
+                        {% elif current_language == 'en' %}
+                        Recent Activity Log
+                        {% else %}
+                        最近のアクティビティログ
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="log-container bg-dark text-light p-3 rounded" style="font-family: 'Courier New', monospace; height: 200px; overflow-y: auto;">
+                        <div class="log-entry">[2024-01-20 15:30:22] INFO - Bot started successfully</div>
+                        <div class="log-entry">[2024-01-20 15:30:25] INFO - Monitoring 156 repositories</div>
+                        <div class="log-entry">[2024-01-20 15:32:10] SUCCESS - Found trending project: awesome-vue</div>
+                        <div class="log-entry">[2024-01-20 15:33:45] INFO - Notification sent to 5 subscribers</div>
+                        <div class="log-entry">[2024-01-20 15:35:12] INFO - Analyzed 247 GitHub events</div>
+                        <div class="log-entry">[2024-01-20 15:37:28] SUCCESS - Updated project statistics</div>
+                        <div class="log-entry">[2024-01-20 15:40:15] INFO - Processing new star events...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh bot status every 30 seconds
+setInterval(function() {
+    fetch('/api/bot_status')
+        .then(response => response.json())
+        .then(data => {
+            // Update bot status in real-time (demo)
+            console.log('Bot status updated:', data);
+        })
+        .catch(error => console.error('Error fetching bot status:', error));
+}, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}第 {{ issue_number }} 期 - HelloGitHub Demo{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首页</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('browse') }}">浏览期刊</a></li>
+                        <li class="breadcrumb-item active">第 {{ issue_number }} 期</li>
+                    </ol>
+                </nav>
+                
+                <div class="d-flex align-items-center mb-3">
+                    <div class="issue-number me-4" style="width: 80px; height: 80px; font-size: 2rem;">
+                        {{ issue_number }}
+                    </div>
+                    <div>
+                        <h1 class="display-5 fw-bold mb-2">HelloGitHub 第 {{ issue_number }} 期</h1>
+                        <p class="lead text-muted mb-0">
+                            <i class="fas fa-folder me-2"></i>共收录 {{ total_projects }} 个开源项目
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    {% if issue_number > 1 %}
+                    <a href="{{ url_for('view_issue', issue_number=issue_number-1) }}" 
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-chevron-left me-1"></i>上一期
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('browse') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-1"></i>所有期刊
+                    </a>
+                    
+                    {% if issue_number < 112 %}
+                    <a href="{{ url_for('view_issue', issue_number=issue_number+1) }}" 
+                       class="btn btn-outline-primary">
+                        下一期<i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="py-5">
+    <div class="container">
+        {% for category, projects in categories.items() %}
+        <div class="category-section mb-5">
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="h3 mb-0">
+                    <i class="fas fa-tag me-2"></i>{{ category }}
+                </h2>
+                <span class="badge bg-primary ms-3">{{ projects|length }} 个项目</span>
+            </div>
+            
+            <div class="row g-4">
+                {% for project in projects %}
+                <div class="col-lg-6">
+                    <div class="card project-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    {% if project.url %}
+                                    <a href="{{ project.url }}" target="_blank" 
+                                       class="text-decoration-none text-primary">
+                                        {{ project.title }}
+                                        <i class="fas fa-external-link-alt ms-1 small"></i>
+                                    </a>
+                                    {% else %}
+                                    {{ project.title }}
+                                    {% endif %}
+                                </h5>
+                                
+                                {% if project.github_repo %}
+                                <a href="https://github.com/{{ project.github_repo }}" 
+                                   target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i class="fab fa-github me-1"></i>GitHub
+                                </a>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="card-text text-muted">
+                                {{ project.description }}
+                            </p>
+                            
+                            <div class="d-flex flex-wrap gap-2 mt-auto">
+                                {% if project.language %}
+                                <span class="badge language-badge bg-secondary">
+                                    <i class="fas fa-code me-1"></i>{{ project.language }}
+                                </span>
+                                {% endif %}
+                                
+                                {% if project.github_repo %}
+                                <span class="badge bg-dark">
+                                    <i class="fab fa-github me-1"></i>{{ project.github_repo.split('/')[0] }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Navigation Footer -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h4 class="mb-3">继续探索</h4>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ url_for('search') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>搜索更多项目
+                    </a>
+                    <a href="{{ url_for('browse') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>浏览其他期刊
+                    </a>
+                    <a href="{{ url_for('statistics') }}" class="btn btn-outline-info">
+                        <i class="fas fa-chart-bar me-2"></i>查看统计数据
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.category-section {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+}
+
+.category-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.project-card {
+    border-left: 4px solid var(--accent-color);
+    transition: all 0.3s ease;
+}
+
+.project-card:hover {
+    border-left-color: var(--primary-color);
+    transform: translateX(5px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling for category navigation
+    const categoryHeaders = document.querySelectorAll('.category-section h2');
+    
+    // Create floating category navigation
+    if (categoryHeaders.length > 1) {
+        const nav = document.createElement('div');
+        nav.className = 'category-nav position-fixed';
+        nav.style.cssText = `
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        `;
+        
+        categoryHeaders.forEach((header, index) => {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'nav-link text-decoration-none d-block p-2 small';
+            link.textContent = header.textContent.replace(/[^\w\s]/gi, '').trim();
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                header.scrollIntoView({ behavior: 'smooth' });
+            });
+            nav.appendChild(link);
+        });
+        
+        document.body.appendChild(nav);
+    }
+    
+    // Add copy link functionality
+    document.querySelectorAll('.card-title a').forEach(link => {
+        link.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            navigator.clipboard.writeText(this.href).then(() => {
+                // Show toast notification
+                const toast = document.createElement('div');
+                toast.className = 'position-fixed top-0 end-0 m-3 alert alert-success';
+                toast.textContent = '链接已复制到剪贴板';
+                toast.style.zIndex = '9999';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 2000);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
